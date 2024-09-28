@@ -98,7 +98,8 @@ endpoints.post('/autocadastro', async (req,resp) => {
             let id = await db.inserirAutoCadastro(cadastro);
 
             resp.send({
-                Confirmação: "Consulta agendada!"
+                Confirmação: "Consulta agendada!",
+                pacienteId: id
             })
 
 
@@ -171,7 +172,31 @@ endpoints.post('/agenda', async (req,resp) => {
             let id = await db.inserirAgenda(info);
 
             resp.send({
-                Confirmação: "Consulta agendada!"
+                agendaId: id
+            })
+
+
+    }
+     catch (err) {
+        
+        resp.status(400).send({
+            erro: err.message
+        })
+    }
+})
+
+
+endpoints.post('/consultas', async (req,resp) => {
+
+
+    try {
+        
+            let info = req.body;
+
+            let id = await db.criarConsultas(info);
+
+            resp.send({
+                consultaId: id
             })
 
 

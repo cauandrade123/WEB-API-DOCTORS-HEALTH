@@ -39,7 +39,7 @@ VALUES (?, ?, ?, ?, ?, ?, ?);
 
                     `
 
-let resposta= await con.query(comando, [cadastro.nome, cadastro.nascimento, cadastro.rg, cadastro.cpf, cadastro.pagamento, cadastro.telefone, cadastro.id_agenda])
+let resposta= await con.query(comando, [cadastro.nome, cadastro.nascimento, cadastro.rg, cadastro.cpf, cadastro.metodo, cadastro.telefone, cadastro.id_agenda])
 let info = resposta[0];
 
 return info.insertId;
@@ -50,8 +50,7 @@ export async function consultarConsultasPassadas(){
 
     const comando = `
     SELECT 
-	tb_agenda.dia,
-    tb_agenda.horario,
+	tb_agenda.dia_horario,
    tb_auto_cadastro.nome,
 	tb_auto_cadastro.rg,
     tb_auto_cadastro.nascimento,
@@ -82,8 +81,7 @@ export async function consultarConsultasFuturas(){
 
     const comando = `
      SELECT 
-	tb_agenda.dia,
-    tb_agenda.horario,
+	tb_agenda.dia_horario,
    tb_auto_cadastro.nome,
 	tb_auto_cadastro.rg,
     tb_auto_cadastro.nascimento,
@@ -115,8 +113,7 @@ export async function consultarConsultasCpf(cpf){
 
     const comando = `
      SELECT 
-	tb_agenda.dia,
-    tb_agenda.horario,
+	tb_agenda.dia_horario,
    tb_auto_cadastro.nome,
 	tb_auto_cadastro.rg,
     tb_auto_cadastro.nascimento,
@@ -149,6 +146,7 @@ export async function alterarConsulta(id,consulta){
 
     const comando = `
     update consulta set
+
     tratamento =?,
     condicao =?,
     medicacao =?,
@@ -189,20 +187,36 @@ GROUP BY
 }
 
 
-export async function inserirAgenda(info){
+export async function inserirAgenda(info) {
+   
+    const dataHora = `${info.dia} ${info.hora}`; // Ex: '2024-09-28 14:30:00'
 
     const comando = `
-    INSERT INTO tb_agenda (data, horario) 
-    VALUES (?, ?);
+        INSERT INTO tb_agenda (dia_horario) 
+        VALUES (?);
+    `;
+
     
-                        `
-    
-    let resposta= await con.query(comando, [info.data, info.horario])
+    let resposta = await con.query(comando, [dataHora]);
     let cadastro = resposta[0];
-    
-    return cadastro.insertId;
-    
-    }
+
+    return cadastro.insertId; // Retorna o ID do registro inserido
+}
 
 
+
+    export async function criarConsultas(info){
+
+        const comando = `
+        INSERT INTO consulta (id_agenda, tratamento, condicao, medicacao, preco,id_paciente) 
+        VALUES (?, ?,?,?,?,?);
+        
+                            `
+        
+        let resposta= await con.query(comando, [info.id_agenda, info.tratamento, info.condicao, info.medicacao, info.preco, info.id_paciente])
+        let cadastro = resposta[0];
+        
+        return cadastro.insertId;
+        
+        }
 
