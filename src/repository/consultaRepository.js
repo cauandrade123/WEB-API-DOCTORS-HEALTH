@@ -34,12 +34,12 @@ export async function verificarLogin(email, senha) {
 export async function inserirAutoCadastro(cadastro){
 
 const comando = `
-INSERT INTO tb_auto_cadastro (nome, idade, rg, cpf, metodo_pagamento, telefone, id_agenda) 
+INSERT INTO tb_auto_cadastro (nome, nascimento, rg, cpf, metodo_pagamento, telefone, id_agenda) 
 VALUES (?, ?, ?, ?, ?, ?, ?);
 
                     `
 
-let resposta= await con.query(comando, [cadastro.nome, cadastro.idade, cadastro.rg, cadastro.cpf, cadastro.pagamento, cadastro.telefone, cadastro.agenda])
+let resposta= await con.query(comando, [cadastro.nome, cadastro.nascimento, cadastro.rg, cadastro.cpf, cadastro.pagamento, cadastro.telefone, cadastro.id_agenda])
 let info = resposta[0];
 
 return info.insertId;
@@ -54,7 +54,7 @@ export async function consultarConsultasPassadas(){
     tb_agenda.horario,
    tb_auto_cadastro.nome,
 	tb_auto_cadastro.rg,
-    tb_auto_cadastro.idade,
+    tb_auto_cadastro.nascimento,
     tb_auto_cadastro.cpf,
     consulta.tratamento,
     consulta.condicao,
@@ -86,7 +86,7 @@ export async function consultarConsultasFuturas(){
     tb_agenda.horario,
    tb_auto_cadastro.nome,
 	tb_auto_cadastro.rg,
-    tb_auto_cadastro.idade,
+    tb_auto_cadastro.nascimento,
     tb_auto_cadastro.cpf,
     consulta.tratamento,
     consulta.condicao,
@@ -119,7 +119,7 @@ export async function consultarConsultasCpf(cpf){
     tb_agenda.horario,
    tb_auto_cadastro.nome,
 	tb_auto_cadastro.rg,
-    tb_auto_cadastro.idade,
+    tb_auto_cadastro.nascimento,
     tb_auto_cadastro.cpf,
     consulta.tratamento,
     consulta.condicao,
@@ -189,7 +189,20 @@ GROUP BY
 }
 
 
+export async function inserirAgenda(info){
 
+    const comando = `
+    INSERT INTO tb_agenda (data, horario) 
+    VALUES (?, ?);
+    
+                        `
+    
+    let resposta= await con.query(comando, [info.data, info.horario])
+    let cadastro = resposta[0];
+    
+    return cadastro.insertId;
+    
+    }
 
 
 

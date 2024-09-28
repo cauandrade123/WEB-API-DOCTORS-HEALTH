@@ -1,6 +1,7 @@
 import * as db from '../repository/consultaRepository.js'
 import jwt from 'jsonwebtoken';
 
+
 import {Router} from "express";
 const endpoints = Router();
 
@@ -87,7 +88,7 @@ endpoints.get('/consultasCpf/:cpf', async (req,resp) => {
 })
 
 
-endpoints.post('/AutoCadastro', async (req,resp) => {
+endpoints.post('/autocadastro', async (req,resp) => {
 
 
     try {
@@ -160,7 +161,28 @@ endpoints.get('/financeiro/:mes/:ano', async (req,resp) => {
     
 })
 
+endpoints.post('/agenda', async (req,resp) => {
 
+
+    try {
+        
+            let info = req.body;
+
+            let id = await db.inserirAgenda(info);
+
+            resp.send({
+                Confirmação: "Consulta agendada!"
+            })
+
+
+    }
+     catch (err) {
+        
+        resp.status(400).send({
+            erro: err.message
+        })
+    }
+})
 
 
 
