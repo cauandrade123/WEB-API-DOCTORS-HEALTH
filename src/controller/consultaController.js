@@ -39,6 +39,7 @@ endpoints.get('/consultasPassadas', async (req,resp) => {
      catch (err) {
         
         resp.status(400).send({
+            message:'erro ao consultar pacientes',
             erro: err.message
         })
     }
@@ -200,6 +201,16 @@ endpoints.post('/consultas', async (req,resp) => {
     }
 })
 
+
+endpoints.get('/agenda/consultas', (req, resp) => {
+    try {
+        let resposta = db.consultarConsultasCpf()
+
+        resp.send(resposta)
+    } catch (error) {
+        
+    }
+})
 
 
 
