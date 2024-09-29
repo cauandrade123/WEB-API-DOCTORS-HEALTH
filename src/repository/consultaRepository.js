@@ -160,29 +160,30 @@ export async function alterarConsulta(id,consulta){
 
 }
 
-export async function consultarfinanceiro(mes, ano){
-
+export async function consultarfinanceiro(periodo) {
     const comando = `
-SELECT 
-    MONTH(tb_agenda.dia) AS mes,
-    YEAR(tb_agenda.dia) AS ano,
-    SUM(consulta.preco) AS valor_total
-FROM 
-    consulta
-JOIN 
-    tb_agenda ON consulta.id_agenda = tb_agenda.id_agenda
-WHERE 
-    MONTH(tb_agenda.dia) = ? AND  
-    YEAR(tb_agenda.dia) = ?        
-GROUP BY 
-    ano, mes;
-    `
+        SELECT 
+            MONTH(tb_agenda.dia_horario) AS mes,
+            YEAR(tb_agenda.dia_horario) AS ano,
+            SUM(consulta.preco) AS valor_total
+        FROM 
+            consulta
+        JOIN 
+            tb_agenda ON consulta.id_agenda = tb_agenda.id_agenda
+        WHERE 
+            MONTH(tb_agenda.dia_horario) = ? AND  
+            YEAR(tb_agenda.dia_horario) = ?       
+        GROUP BY 
+            ano, mes;
+    `;
 
-    let resposta= await con.query(comando[mes, ano])
+   
+    let resposta = await con.query(comando, [periodo.mes, periodo.ano]);
     let registros = resposta[0];
 
-    return registros
+    return registros;
 }
+
 
 
 export async function inserirAgenda(info) {

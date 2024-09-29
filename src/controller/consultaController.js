@@ -131,28 +131,23 @@ endpoints.put('/consultas/:id', async (req,resp) => {
 })
 
 
-endpoints.get('/financeiro/:mes/:ano', async (req,resp) => {
+endpoints.post('/financeiro', async (req, resp) => {
+    let financeiro = req.body; 
 
-
+    try {
+       
+        let registros = await db.consultarfinanceiro(financeiro);
         
-            let mes = req.params.mes;
-            let ano = req.params.ano;
+        resp.send(registros);
 
-         
-            try {
+    
+    } catch (err) {
         
-                let registros = await db.consultarfinanceiro(mes,ano);
-                resp.send(registros)
-    
-        }
-         catch (err) {
-            
-            resp.status(400).send({
-                erro: err.message
-            })
-        }
-    
-})
+        resp.status(400).send({
+            erro: err.message
+        });
+    }
+});
 
 endpoints.post('/agenda', async (req,resp) => {
 
