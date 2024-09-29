@@ -1,33 +1,33 @@
 import con from "./connection.js";
+import bcrypt from 'bcrypt';
 
+export async function verificarLogin(info) {
+    const comando = `
+    SELECT * FROM tb_login WHERE email = ?;
+    `;
 
-export async function verificarLogin(email, senha) {
-
-    const comando= 'SELECT * FROM tb_login WHERE email = ?'
     try {
-        
-        const [verificacao] = await con.query(comando, [email]);
+        const [verificacao] = await con.query(comando, [info.email]);
 
-       
         if (verificacao.length === 0) {
-            return null; 
+            return null; // Usuário não encontrado
         }
 
         const usuario = verificacao[0];
 
-       
-        if (senha !== usuario.senha) {
-            return null; 
+        // Comparar a senha fornecida com a senha armazenada (não hashada)
+        if (info.senha !== usuario.senha) {
+            return null; // Senha incorreta
         }
 
-        return usuario; 
+        return usuario; // Retorna o usuário caso o login seja bem-sucedido
     } catch (error) {
         console.error('Erro ao verificar login:', error);
-        throw new Error('Erro ao verificar login.');
-    } finally {
-        await con.release();
+        throw new Error('Erro ao verificar login.'); // Lançar um erro genérico
     }
-};
+}
+
+
 
 
 
@@ -162,29 +162,30 @@ export async function alterarConsulta(id,consulta){
 
 }
 
-export async function consultarfinanceiro(mes, ano){
-
+export async function consultarfinanceiro(periodo) {
     const comando = `
-SELECT 
-    MONTH(tb_agenda.dia) AS mes,
-    YEAR(tb_agenda.dia) AS ano,
-    SUM(consulta.preco) AS valor_total
-FROM 
-    consulta
-JOIN 
-    tb_agenda ON consulta.id_agenda = tb_agenda.id_agenda
-WHERE 
-    MONTH(tb_agenda.dia) = ? AND  
-    YEAR(tb_agenda.dia) = ?        
-GROUP BY 
-    ano, mes;
-    `
+        SELECT 
+            MONTH(tb_agenda.dia_horario) AS mes,
+            YEAR(tb_agenda.dia_horario) AS ano,
+            SUM(consulta.preco) AS valor_total
+        FROM 
+            consulta
+        JOIN 
+            tb_agenda ON consulta.id_agenda = tb_agenda.id_agenda
+        WHERE 
+            MONTH(tb_agenda.dia_horario) = ? AND  
+            YEAR(tb_agenda.dia_horario) = ?       
+        GROUP BY 
+            ano, mes;
+    `;
 
-    let resposta= await con.query(comando[mes, ano])
+   
+    let resposta = await con.query(comando, [periodo.mes, periodo.ano]);
     let registros = resposta[0];
 
-    return registros
+    return registros;
 }
+
 
 
 export async function inserirAgenda(info) {
