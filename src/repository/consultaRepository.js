@@ -1,33 +1,31 @@
 import con from "./connection.js";
+import bcrypt from 'bcrypt';
 
+export async function verificarLogin(info) {
+    const comando = `
+    SELECT * FROM tb_login WHERE email = ?;
+    `;
 
-export async function verificarLogin(email, senha) {
-
-    const comando= 'SELECT * FROM tb_login WHERE email = ?'
     try {
-        
-        const [verificacao] = await con.query(comando, [email]);
+        const [verificacao] = await con.query(comando, [info.email]);
 
-       
         if (verificacao.length === 0) {
-            return null; 
+            return null; // Usuário não encontrado
         }
 
         const usuario = verificacao[0];
 
-       
-        if (senha !== usuario.senha) {
-            return null; 
+        // Comparar a senha fornecida com a senha armazenada (não hashada)
+        if (info.senha !== usuario.senha) {
+            return null; // Senha incorreta
         }
 
-        return usuario; 
+        return usuario; // Retorna o usuário caso o login seja bem-sucedido
     } catch (error) {
         console.error('Erro ao verificar login:', error);
-        throw new Error('Erro ao verificar login.');
-    } finally {
-        await con.release();
+        throw new Error('Erro ao verificar login.'); // Lançar um erro genérico
     }
-};
+}
 
 
 

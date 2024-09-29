@@ -1,41 +1,32 @@
 import * as db from '../repository/consultaRepository.js'
 import jwt from 'jsonwebtoken';
-
-
 import {Router} from "express";
 const endpoints = Router();
 
 
+endpoints.post('/login', async (req, res) => {
+    const info = req.body; 
 
-endpoints.get('/login/:email/:senha', async (req, res) => {
-    const { email, senha } = req.params; 
-    
-    if (!email || !senha) {
+    if (!info.email || !info.senha) {
         return res.status(400).json({ message: 'Email e senha são obrigatórios.' });
     }
 
     try {
-       
-        const usuario = await db.verificarLogin(email, senha);
+        const usuario = await db.verificarLogin(info);
 
         if (!usuario) {
             return res.status(401).json({ message: 'Credenciais inválidas.' });
         }
 
         
-        const token = jwt.sign({ id: usuario.id_login }, 'admin');
+        const token = jwt.sign({ id: usuario.id_login }, process.env.JWT_SECRET);
 
-       
         return res.status(200).json({ token });
     } catch (error) {
         console.error('Erro ao realizar o login:', error);
         return res.status(500).json({ message: 'Erro ao realizar o login.' });
     }
 });
-
-
-
-
 endpoints.get('/consultasPassadas', async (req,resp) => {
 
 
