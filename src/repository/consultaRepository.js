@@ -49,7 +49,7 @@ return info.insertId;
 export async function consultarConsultasPassadas(){
 
     const comando = `
-    SELECT 
+       SELECT 
 	tb_agenda.dia_horario,
    tb_auto_cadastro.nome,
 	tb_auto_cadastro.rg,
@@ -66,9 +66,9 @@ JOIN
 JOIN 
     tb_auto_cadastro ON consulta.id_paciente = tb_auto_cadastro.id_paciente
 WHERE 
-    CONCAT(tb_agenda.dia, ' ', tb_agenda.horario) < NOW()
+    CONCAT(tb_agenda.dia_horario) < NOW()
 ORDER BY 
-    tb_agenda.dia DESC, tb_agenda.horario DESC;
+    tb_agenda.dia_horario DESC
     `
 
     let resposta= await con.query(comando)
@@ -97,9 +97,9 @@ JOIN
 JOIN 
     tb_auto_cadastro ON consulta.id_paciente = tb_auto_cadastro.id_paciente
 WHERE 
-    CONCAT(tb_agenda.dia, ' ', tb_agenda.horario) > NOW()
+    CONCAT(tb_agenda.dia_horario) > NOW()
 ORDER BY 
-    tb_agenda.dia DESC, tb_agenda.horario asc;
+    tb_agenda.dia_horario DESC
     `
 
     let resposta= await con.query(comando)

@@ -50,6 +50,7 @@ endpoints.get('/consultasPassadas', async (req,resp) => {
         resp.status(400).send({
             erro: err.message
         })
+        
     }
 })
 
