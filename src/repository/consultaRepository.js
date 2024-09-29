@@ -29,6 +29,8 @@ export async function verificarLogin(info) {
 
 
 
+
+
 export async function inserirAutoCadastro(cadastro){
 
 const comando = `

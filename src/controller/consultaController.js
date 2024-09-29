@@ -27,6 +27,9 @@ endpoints.post('/login', async (req, res) => {
         return res.status(500).json({ message: 'Erro ao realizar o login.' });
     }
 });
+
+
+
 endpoints.get('/consultasPassadas', async (req,resp) => {
 
 
@@ -206,6 +209,8 @@ endpoints.get('/agenda/consultas', (req, resp) => {
         
     }
 })
+
+
 
 
 
