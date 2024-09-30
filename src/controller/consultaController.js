@@ -69,9 +69,10 @@ endpoints.get('/consultasFuturas', async (req,resp) => {
 endpoints.get('/consultasCpf/:cpf', async (req,resp) => {
 
     let cpf = req.params.cpf
+    console.log(cpf)
     try {
         
-            let registros = await db.consultarConsultasCpf(cpf);
+            let registros = await db.consultarConsultasCpf(`${cpf}%`);
             resp.send(registros)
 
     }

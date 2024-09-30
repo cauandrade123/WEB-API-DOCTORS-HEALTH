@@ -129,7 +129,7 @@ JOIN
 JOIN 
     tb_auto_cadastro ON consulta.id_paciente = tb_auto_cadastro.id_paciente
 WHERE 
-  tb_auto_cadastro.cpf = ?;
+  tb_auto_cadastro.cpf LIKE ?;
     `
 
     let resposta= await con.query(comando, [cpf])
