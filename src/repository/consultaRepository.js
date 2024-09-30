@@ -1,12 +1,11 @@
 import con from "./connection.js";
 
 
-export async function verificarLogin(email, senha) {
+export async function verificarLogin(info) {
 
     const comando= 'SELECT * FROM tb_login WHERE email = ?'
     try {
-        
-        const [verificacao] = await con.query(comando, [email]);
+        const [verificacao] = await con.query(comando, [info.email]);
 
        
         if (verificacao.length === 0) {
@@ -16,17 +15,16 @@ export async function verificarLogin(email, senha) {
         const usuario = verificacao[0];
 
        
-        if (senha !== usuario.senha) {
+        if (info.senha !== usuario.senha) {
             return null; 
         }
 
         return usuario; 
     } catch (error) {
+        console.log(error);
         console.error('Erro ao verificar login:', error);
         throw new Error('Erro ao verificar login.');
-    } finally {
-        await con.release();
-    }
+    } 
 };
 
 

@@ -7,24 +7,22 @@ const endpoints = Router();
 endpoints.post('/login', async (req, res) => {
     const info = req.body; 
 
-    if (!info.email || !info.senha) {
-        return res.status(400).json({ message: 'Email e senha são obrigatórios.' });
-    }
-
     try {
         const usuario = await db.verificarLogin(info);
 
+   
         if (!usuario) {
             return res.status(401).json({ message: 'Credenciais inválidas.' });
         }
 
         
         const token = jwt.sign({ id: usuario.id_login }, process.env.JWT_SECRET);
-
-        return res.status(200).json({ token });
+      
+     
+        return res.status(200).send({ token });
     } catch (error) {
         console.error('Erro ao realizar o login:', error);
-        return res.status(500).json({ message: 'Erro ao realizar o login.' });
+        return res.status(404).json({ message: 'Erro ao realizar o login.' });
     }
 });
 
