@@ -87,7 +87,8 @@ export async function consultarConsultasFuturas(){
     consulta.tratamento,
     consulta.condicao,
     consulta.medicacao,
-    consulta.preco
+    consulta.preco,
+    consulta.finalizada
 FROM 
     consulta
 JOIN 
@@ -95,7 +96,7 @@ JOIN
 JOIN 
     tb_auto_cadastro ON consulta.id_paciente = tb_auto_cadastro.id_paciente
 WHERE 
-    CONCAT(tb_agenda.dia_horario) > NOW()
+    finalizada = true
 ORDER BY 
     tb_agenda.dia_horario DESC
     `
@@ -206,12 +207,12 @@ export async function inserirAgenda(info) {
     export async function criarConsultas(info){
 
         const comando = `
-        INSERT INTO consulta (id_agenda, tratamento, condicao, medicacao, preco,id_paciente) 
-        VALUES (?, ?,?,?,?,?);
+        INSERT INTO consulta (id_agenda, tratamento, condicao, medicacao, preco,id_paciente, finalizada) 
+        VALUES (?, ?,?,?,?,?,?);
         
                             `
         
-        let resposta= await con.query(comando, [info.id_agenda, info.tratamento, info.condicao, info.medicacao, info.preco, info.id_paciente])
+        let resposta= await con.query(comando, [info.id_agenda, info.tratamento, info.condicao, info.medicacao, info.preco, info.id_paciente, info.finalizada])
         let cadastro = resposta[0];
         
         return cadastro.insertId;
