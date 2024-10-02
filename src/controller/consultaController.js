@@ -85,8 +85,6 @@ endpoints.get('/consultasCpf/:cpf', async (req,resp) => {
             let registros = await db.consultarConsultasCpf(`${cpf}%`);
             resp.send(registros)
 
-        let registros = await db.consultarConsultasCpf(cpf);
-        resp.send(registros)
         
     }
     catch (err) {
