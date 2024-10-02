@@ -31,22 +31,22 @@ export async function verificarLogin(info) {
 
 
 
-export async function inserirAutoCadastro(cadastro){
+export async function inserirAutoCadastro(cadastro) {
 
-const comando = `
+    const comando = `
 INSERT INTO tb_auto_cadastro (nome, nascimento, rg, cpf, metodo_pagamento, telefone, id_agenda) 
 VALUES (?, ?, ?, ?, ?, ?, ?);
 
                     `
 
-let resposta= await con.query(comando, [cadastro.nome, cadastro.nascimento, cadastro.rg, cadastro.cpf, cadastro.metodo, cadastro.telefone, cadastro.id_agenda])
-let info = resposta[0];
+    let resposta = await con.query(comando, [cadastro.nome, cadastro.nascimento, cadastro.rg, cadastro.cpf, cadastro.metodo, cadastro.telefone, cadastro.id_agenda])
+    let info = resposta[0];
 
-return info.insertId;
+    return info.insertId;
 
 }
 
-export async function consultarConsultasPassadas(){
+export async function consultarConsultasPassadas() {
 
     const comando = `
     SELECT 
@@ -71,13 +71,13 @@ ORDER BY
     tb_agenda.dia DESC, tb_agenda.horario DESC;
     `
 
-    let resposta= await con.query(comando)
+    let resposta = await con.query(comando)
     let registros = resposta[0];
 
     return registros
 }
 
-export async function consultarConsultasFuturas(){
+export async function consultarConsultasFuturas() {
 
     const comando = `
      SELECT 
@@ -102,14 +102,14 @@ ORDER BY
     tb_agenda.dia DESC, tb_agenda.horario asc;
     `
 
-    let resposta= await con.query(comando)
+    let resposta = await con.query(comando)
     let registros = resposta[0];
 
     return registros
 }
 
 
-export async function consultarConsultasCpf(cpf){
+export async function consultarConsultasCpf(cpf) {
 
     const comando = `
      SELECT 
@@ -132,7 +132,7 @@ WHERE
   tb_auto_cadastro.cpf = ?;
     `
 
-    let resposta= await con.query(comando, [cpf])
+    let resposta = await con.query(comando, [cpf])
     let registros = resposta[0];
 
     return registros
@@ -142,7 +142,7 @@ WHERE
 
 
 
-export async function alterarConsulta(id,consulta){
+export async function alterarConsulta(id, consulta) {
 
     const comando = `
     update consulta set
@@ -155,7 +155,7 @@ export async function alterarConsulta(id,consulta){
  where id_consulta = ?;
     `
 
-    let resposta= await con.query(comando, [consulta.tratamento, consulta.condicao, consulta.medicacao, consulta.preco, id])
+    let resposta = await con.query(comando, [consulta.tratamento, consulta.condicao, consulta.medicacao, consulta.preco, id])
     let info = resposta[0];
 
     return info.affectedRows;
@@ -179,7 +179,7 @@ export async function consultarfinanceiro(periodo) {
             ano, mes;
     `;
 
-   
+
     let resposta = await con.query(comando, [periodo.mes, periodo.ano]);
     let registros = resposta[0];
 
@@ -189,7 +189,7 @@ export async function consultarfinanceiro(periodo) {
 
 
 export async function inserirAgenda(info) {
-   
+
     const dataHora = `${info.dia} ${info.hora}`; // Ex: '2024-09-28 14:30:00'
 
     const comando = `
@@ -197,7 +197,7 @@ export async function inserirAgenda(info) {
         VALUES (?);
     `;
 
-    
+
     let resposta = await con.query(comando, [dataHora]);
     let cadastro = resposta[0];
 
@@ -206,18 +206,38 @@ export async function inserirAgenda(info) {
 
 
 
-    export async function criarConsultas(info){
+export async function criarConsultas(info) {
 
-        const comando = `
+    const comando = `
         INSERT INTO consulta (id_agenda, tratamento, condicao, medicacao, preco,id_paciente) 
         VALUES (?, ?,?,?,?,?);
         
                             `
-        
-        let resposta= await con.query(comando, [info.id_agenda, info.tratamento, info.condicao, info.medicacao, info.preco, info.id_paciente])
-        let cadastro = resposta[0];
-        
-        return cadastro.insertId;
-        
-        }
 
+    let resposta = await con.query(comando, [info.id_agenda, info.tratamento, info.condicao, info.medicacao, info.preco, info.id_paciente])
+    let cadastro = resposta[0];
+
+    return cadastro.insertId;
+
+
+
+}
+
+export async function verificarConsultaPorCPF(cpf) {
+
+    const [rows] = await con.query(`
+              SELECT consulta.id_consulta
+              FROM tb_auto_cadastro
+              JOIN consulta ON tb_auto_cadastro.id_paciente = consulta.id_paciente
+              WHERE tb_auto_cadastro.cpf = ? AND consulta.finalizada = 0
+            `, [cpf]);
+
+    return rows.length > 0 ? rows[0] : null;
+};
+
+
+export async function verificarCPFExistente(cpf) {
+
+    const [resultado] = await db.query('SELECT COUNT(*) as total FROM tb_auto_cadastro WHERE cpf = ?', [cpf]);
+    return resultado.total > 0; // Retorna true se o CPF existir
+};
