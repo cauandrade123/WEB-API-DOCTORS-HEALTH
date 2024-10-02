@@ -240,5 +240,5 @@ export async function verificarConsultaPorCPF(cpf) {
 export async function verificarCPFExistente(cpf) {
 
     const [resultado] = await db.query('SELECT COUNT(*) as total FROM tb_auto_cadastro WHERE cpf = ?', [cpf]);
-    return resultado.total > 0; // Retorna true se o CPF existir
+    return resultado.total > 0; 
 };
