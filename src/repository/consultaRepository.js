@@ -239,6 +239,28 @@ export async function verificarConsultaPorCPF(cpf) {
 
 export async function verificarCPFExistente(cpf) {
 
-    const [resultado] = await db.query('SELECT COUNT(*) as total FROM tb_auto_cadastro WHERE cpf = ?', [cpf]);
+    const [resultado] = await con.query('SELECT COUNT(*) as total FROM tb_auto_cadastro WHERE cpf = ?', [cpf]);
     return resultado.total > 0; 
 };
+
+
+export async function obterHorariosOcupados (data){
+    const result = await con.query(
+        'SELECT TIME(dia_horario) AS hora FROM tb_agenda WHERE DATE(dia_horario) = ?',
+        [data]
+    );
+
+  
+
+    if (!result[0] || result[0].length === 0) {
+        console.log('Nenhum horário ocupado encontrado para a data fornecida.');
+        return []; // Retorna um array vazio em vez de lançar um erro
+    }
+
+ return [result[0]];;
+};
+
+
+
+
+
