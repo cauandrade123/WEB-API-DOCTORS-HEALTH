@@ -15,6 +15,8 @@ endpoints.post('/login', async (req, res) => {
 
     try {
         const usuario = await db.verificarLogin(info);
+
+   
         
         if (!usuario) {
             return res.status(401).json({ message: 'Credenciais inválidas.' });
@@ -22,11 +24,14 @@ endpoints.post('/login', async (req, res) => {
         
         
         const token = jwt.sign({ id: usuario.id_login }, process.env.JWT_SECRET);
+      
+     
+        return res.status(200).send({ token });
         
         return res.status(200).json({ token });
     } catch (error) {
         console.error('Erro ao realizar o login:', error);
-        return res.status(500).json({ message: 'Erro ao realizar o login.' });
+        return res.status(404).json({ message: 'Erro ao realizar o login.' });
     }
 });
 
@@ -50,6 +55,7 @@ endpoints.get('/consultasPassadas', async (req,resp) => {
             message:'erro ao consultar pacientes',
             erro: err.message
         })
+        
     }
 })
 
@@ -73,8 +79,12 @@ endpoints.get('/consultasFuturas', async (req,resp) => {
 endpoints.get('/consultasCpf/:cpf', async (req,resp) => {
     
     let cpf = req.params.cpf
+    console.log(cpf)
     try {
         
+            let registros = await db.consultarConsultasCpf(`${cpf}%`);
+            resp.send(registros)
+
         let registros = await db.consultarConsultasCpf(cpf);
         resp.send(registros)
         
