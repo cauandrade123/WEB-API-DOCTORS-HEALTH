@@ -5,6 +5,22 @@ const endpoints = Router();
 
 
 
+endpoints.get ('/consultaFinalizar/:cpf', async (req, resp) => {
+    let cpf = req.params.value
+
+
+    try {
+        
+        let resposta = await db.consultaFinalizar(cpf)
+
+        resp.send(resposta)
+
+    } catch (error) {
+        resp.status(404).send({
+            error: error
+        })
+    }
+})
 
 endpoints.post('/login', async (req, res) => {
     const info = req.body; 
@@ -69,7 +85,7 @@ endpoints.get('/consultasFuturas', async (req,resp) => {
         
     }
     catch (err) {
-        
+        console.log(err);
         resp.status(400).send({
             erro: err.message
         })
@@ -273,6 +289,29 @@ endpoints.post('/horarios-ocupados', async (req, res) => {
     }
 
 });
+
+endpoints.put('/finalizarConsulta/:cpf', async (req, resp) => {
+
+    let cpf = req.params.cpf
+
+    try {
+
+        const resposta = await db.FinalizarConsulta(cpf)
+
+        if(resposta > 0) {
+        return resp.send({
+            sucesso: 'Finalizada com sucesso'
+        })
+        }
+
+    } catch (error) {
+        console.log(error)
+        resp.status(500).send({
+            error: 'Algo está errado'
+        })
+    }
+
+})
 
 
 export default endpoints;

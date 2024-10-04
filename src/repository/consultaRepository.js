@@ -1,6 +1,43 @@
 import con from "./connection.js";
 
 
+export async function consultaFinalizar(cpf){
+
+        const comando = `
+     select 
+    consulta.finalizada
+    from consulta
+    JOIN tb_auto_cadastro ON consulta.id_paciente = tb_auto_cadastro.id_paciente
+    where tb_auto_cadastro.cpf = ?;
+        `
+
+        let resposta = await con.query(comando, [cpf])
+        let info = resposta[0]
+        console.log(info)
+        return info
+
+
+}
+
+export async function FinalizarConsulta(cpf) {
+
+    const comando = `
+    
+    UPDATE consulta c
+    JOIN tb_auto_cadastro p ON c.id_paciente = p.id_paciente
+    SET c.finalizada = true
+    WHERE p.cpf = ?;
+    
+
+    `
+
+    let resposta = await con.query(comando, [cpf])
+    let info = resposta[0]
+
+    return info.affectedRows;
+
+}
+
 export async function verificarLogin(info) {
 
     const comando= 'SELECT * FROM tb_login WHERE email = ?'
@@ -64,7 +101,7 @@ JOIN
 JOIN 
     tb_auto_cadastro ON consulta.id_paciente = tb_auto_cadastro.id_paciente
 WHERE 
-    CONCAT(tb_agenda.dia_horario) < NOW()
+    finalizada = true 
 ORDER BY 
     tb_agenda.dia_horario DESC
     `
@@ -96,7 +133,7 @@ JOIN
 JOIN 
     tb_auto_cadastro ON consulta.id_paciente = tb_auto_cadastro.id_paciente
 WHERE 
-    finalizada = true
+   finalizada = false 
 ORDER BY 
     tb_agenda.dia_horario DESC
     `
