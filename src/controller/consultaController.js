@@ -5,6 +5,22 @@ const endpoints = Router();
 
 
 
+endpoints.get ('/consultaFinalizar/:cpf', async (req, resp) => {
+    let cpf = req.params.value
+
+
+    try {
+        
+        let resposta = await db.consultaFinalizar(cpf)
+
+        resp.send(resposta)
+
+    } catch (error) {
+        resp.status(404).send({
+            error: error
+        })
+    }
+})
 
 endpoints.post('/login', async (req, res) => {
     const info = req.body; 
@@ -69,7 +85,7 @@ endpoints.get('/consultasFuturas', async (req,resp) => {
         
     }
     catch (err) {
-        
+        console.log(err);
         resp.status(400).send({
             erro: err.message
         })
@@ -224,38 +240,10 @@ endpoints.get('/agenda/consultas', (req, resp) => {
 
 
 
-function validarCPF(cpf) {
-    cpf = cpf.replace(/[^\d]+/g, '');
-  
-    if (cpf.length !== 11) return false;
-  
-    if (/^(\d)\1+$/.test(cpf)) return false;
-  
-    const calcularDigito = (base) => {
-      let soma = 0;
-      for (let i = 0; i < base.length; i++) {
-        soma += base[i] * (base.length + 1 - i);
-      }
-      const resto = (soma * 10) % 11;
-      return resto === 10 ? 0 : resto;
-    };
-  
-    const primeiroDigito = calcularDigito(cpf.slice(0, 9));
-    if (primeiroDigito !== parseInt(cpf[9], 10)) return false;
-  
-    const segundoDigito = calcularDigito(cpf.slice(0, 10));
-    if (segundoDigito !== parseInt(cpf[10], 10)) return false;
-  
-    return true;
-  }
 
 endpoints.post('/verificarConsulta', async (req, res) => {
     const { cpf } = req.body;
 
-
-    if (!validarCPF(cpf)) {
-        return res.status(400).json({ message: 'CPF inválido.' });
-    }
 
     try {
         const consulta = await db.verificarConsultaPorCPF(cpf);
@@ -277,12 +265,52 @@ endpoints.post('/verificar-cpf', async (req, res) => {
 
 
     try {
-        const existe = await verificarCPFExistente(cpf);
+        const existe = await db.verificarCPFExistente(cpf);
         return res.status(200).json({ existe });
     } catch (error) {
         console.error('Erro ao verificar CPF:', error);
         return res.status(500).json({ message: 'Erro ao verificar CPF.' });
     }
 });
+
+
+
+endpoints.post('/horarios-ocupados', async (req, res) => {
+    const { data } = req.body;
+
+    try {
+        const horariosOcupados = await db.obterHorariosOcupados(data);
+
+        return res.status(200).json({ horariosOcupados });
+    } catch (error) {
+        console.error('Erro ao obter horários ocupados:', error);
+        return res.status(500).json({ message: 'Erro interno do servidor.' });
+    }
+
+});
+
+endpoints.put('/finalizarConsulta/:cpf', async (req, resp) => {
+
+    let cpf = req.params.cpf
+
+    try {
+
+        const resposta = await db.FinalizarConsulta(cpf)
+
+        if(resposta > 0) {
+        return resp.send({
+            sucesso: 'Finalizada com sucesso'
+        })
+        }
+
+    } catch (error) {
+        console.log(error)
+        resp.status(500).send({
+            error: 'Algo está errado'
+        })
+    }
+
+})
+
 
 export default endpoints;
