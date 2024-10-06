@@ -13,7 +13,6 @@ export async function consultaFinalizar(cpf){
 
         let resposta = await con.query(comando, [cpf])
         let info = resposta[0]
-        console.log(info)
         return info
 
 
@@ -228,7 +227,7 @@ GROUP BY
 
 export async function inserirAgenda(info) {
 
-    const dataHora = `${info.dia} ${info.hora}`; // Ex: '2024-09-28 14:30:00'
+    const dataHora = `${info.dia} ${info.hora}`;
 
     const comando = `
         INSERT INTO tb_agenda (dia_horario) 
@@ -239,7 +238,7 @@ export async function inserirAgenda(info) {
     let resposta = await con.query(comando, [dataHora]);
     let cadastro = resposta[0];
 
-    return cadastro.insertId; // Retorna o ID do registro inserido
+    return cadastro.insertId; 
 }
 
 

@@ -13,6 +13,12 @@ endpoints.get ('/consultaFinalizar/:cpf', async (req, resp) => {
         
         let resposta = await db.consultaFinalizar(cpf)
 
+        if (resposta == true) {
+           
+        } else if (resposta == false) {
+            
+        }
+
         resp.send(resposta)
 
     } catch (error) {
@@ -95,7 +101,6 @@ endpoints.get('/consultasFuturas', async (req,resp) => {
 endpoints.get('/consultasCpf/:cpf', async (req,resp) => {
     
     let cpf = req.params.cpf
-    console.log(cpf)
     try {
         
             let registros = await db.consultarConsultasCpf(`${cpf}%`);
