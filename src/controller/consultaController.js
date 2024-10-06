@@ -113,27 +113,23 @@ endpoints.get('/consultasCpf/:cpf', async (req,resp) => {
 
 endpoints.post('/autocadastro', async (req,resp) => {
     
+    let cadastro = req.body;
     
     try {
-        
-        let cadastro = req.body;
         
         let id = await db.inserirAutoCadastro(cadastro);
         
         resp.send({
-            Confirmação: "Consulta agendada!",
+            confirmação: "Consulta agendada!",
             pacienteId: id
-        })
-        
-        
-    }
-    catch (err) {
-        
+        });
+    } catch (err) {
+        console.error('Erro ao cadastrar paciente:', err);
         resp.status(400).send({
             erro: err.message
-        })
+        });
     }
-})
+});
 
 endpoints.put('/consultas/:id', async (req,resp) => {
     
@@ -241,24 +237,31 @@ endpoints.get('/agenda/consultas', (req, resp) => {
 
 
 
-endpoints.post('/verificarConsulta', async (req, res) => {
-    const { cpf } = req.body;
+endpoints.get('/verificarconsulta/:cpf', async (req, res) => {
+    let cpf = req.params.cpf;
 
 
     try {
         const consulta = await db.verificarConsultaPorCPF(cpf);
 
-        if (!consulta) {
-            return res.status(404).json({ message: 'Nenhuma consulta encontrada para este CPF.' });
+        // Sempre retornar 200 OK, mesmo se a consulta não existir
+        if (consulta) {
+            return res.status(200).json({
+                message: 'Paciente já possui uma consulta agendada.',
+                consulta: consulta, // Retorna os detalhes da consulta, se houver
+                hasConsulta: true   // Indicador que o paciente tem consulta
+            });
+        } else {
+            return res.status(200).json({
+                message: 'Nenhuma consulta encontrada para este CPF.',
+                hasConsulta: false  // Indicador que o paciente não tem consulta
+            });
         }
-
-        return res.status(200).json({ existe: 'Voce já possui uma consulta agendada' });
     } catch (error) {
         console.error('Erro ao verificar a consulta:', error);
         return res.status(500).json({ message: 'Erro ao verificar a consulta.' });
     }
 });
-
 
 endpoints.post('/verificar-cpf', async (req, res) => {
     const { cpf } = req.body;

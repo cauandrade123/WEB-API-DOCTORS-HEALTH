@@ -249,11 +249,11 @@ export async function criarConsultas(info) {
 
         const comando = `
         INSERT INTO consulta (id_agenda, tratamento, condicao, medicacao, preco,id_paciente, finalizada) 
-        VALUES (?, ?,?,?,?,?,?);
+        VALUES (?, ?,?,?,?,?,false);
         
                             `
         
-        let resposta= await con.query(comando, [info.id_agenda, info.tratamento, info.condicao, info.medicacao, info.preco, info.id_paciente, info.finalizada])
+        let resposta= await con.query(comando, [info.id_agenda, info.tratamento, info.condicao, info.medicacao, info.preco, info.id_paciente])
         let cadastro = resposta[0];
         
         return cadastro.insertId;
@@ -261,17 +261,24 @@ export async function criarConsultas(info) {
         }
 
 
-export async function verificarConsultaPorCPF(cpf) {
-
-    const [rows] = await con.query(`
-              SELECT consulta.id_consulta
-              FROM tb_auto_cadastro
-              JOIN consulta ON tb_auto_cadastro.id_paciente = consulta.id_paciente
-              WHERE tb_auto_cadastro.cpf = ? AND consulta.finalizada = 0
-            `, [cpf]);
-
-    return rows.length > 0 ? rows[0] : null;
-};
+        export async function verificarConsultaPorCPF(cpf) {
+            try {
+                // Executa a consulta SQL para buscar consultas não finalizadas do paciente com o CPF informado
+                const [rows] = await con.query(`
+                    SELECT consulta.id_consulta
+                    FROM tb_auto_cadastro
+                    JOIN consulta ON tb_auto_cadastro.id_paciente = consulta.id_paciente
+                    WHERE tb_auto_cadastro.cpf = ? AND consulta.finalizada = false
+                `, [cpf]);
+        
+                // Retorna a consulta encontrada (se houver) ou null caso contrário
+                return rows.length > 0 ? rows[0] : null;
+        
+            } catch (error) {
+                console.error('Erro ao consultar o banco de dados:', error);
+                throw new Error('Erro ao verificar consulta por CPF.');
+            }
+        };
 
 
 export async function verificarCPFExistente(cpf) {
