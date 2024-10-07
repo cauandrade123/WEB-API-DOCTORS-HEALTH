@@ -13,6 +13,12 @@ endpoints.get ('/consultaFinalizar/:cpf', async (req, resp) => {
         
         let resposta = await db.consultaFinalizar(cpf)
 
+        if (resposta == true) {
+           
+        } else if (resposta == false) {
+            
+        }
+
         resp.send(resposta)
 
     } catch (error) {
@@ -95,7 +101,6 @@ endpoints.get('/consultasFuturas', async (req,resp) => {
 endpoints.get('/consultasCpf/:cpf', async (req,resp) => {
     
     let cpf = req.params.cpf
-    console.log(cpf)
     try {
         
             let registros = await db.consultarConsultasCpf(`${cpf}%`);
@@ -315,5 +320,21 @@ endpoints.put('/finalizarConsulta/:cpf', async (req, resp) => {
 
 })
 
+endpoints.get('/puxarfinanceiro/:ano', async (req, resp) => {
+    try {
+
+        const ano = parseInt(req.params.ano);
+
+        let dados = await db.PuxarFinanceiro(ano);
+
+        console.log(dados);
+        resp.send(dados);
+        
+    } catch (error) {
+        resp.status(400).send({
+            erro: error.message
+        });
+    }
+});
 
 export default endpoints;

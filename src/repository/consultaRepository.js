@@ -1,9 +1,9 @@
 import con from "./connection.js";
 
 
-export async function consultaFinalizar(cpf){
+export async function consultaFinalizar(cpf) {
 
-        const comando = `
+    const comando = `
      select 
     consulta.finalizada
     from consulta
@@ -11,10 +11,9 @@ export async function consultaFinalizar(cpf){
     where tb_auto_cadastro.cpf = ?;
         `
 
-        let resposta = await con.query(comando, [cpf])
-        let info = resposta[0]
-        console.log(info)
-        return info
+    let resposta = await con.query(comando, [cpf])
+    let info = resposta[0]
+    return info
 
 
 }
@@ -40,28 +39,28 @@ export async function FinalizarConsulta(cpf) {
 
 export async function verificarLogin(info) {
 
-    const comando= 'SELECT * FROM tb_login WHERE email = ?'
+    const comando = 'SELECT * FROM tb_login WHERE email = ?'
     try {
         const [verificacao] = await con.query(comando, [info.email]);
 
-       
+
         if (verificacao.length === 0) {
-            return null; 
+            return null;
         }
 
         const usuario = verificacao[0];
 
-       
+
         if (info.senha !== usuario.senha) {
-            return null; 
+            return null;
         }
 
-        return usuario; 
+        return usuario;
     } catch (error) {
         console.log(error);
         console.error('Erro ao verificar login:', error);
         throw new Error('Erro ao verificar login.');
-    } 
+    }
 };
 
 
@@ -93,7 +92,8 @@ export async function consultarConsultasPassadas() {
     consulta.tratamento,
     consulta.condicao,
     consulta.medicacao,
-    consulta.preco
+    consulta.preco,
+    consulta.finalizada
 FROM 
     consulta
 JOIN 
@@ -157,7 +157,8 @@ export async function consultarConsultasCpf(cpf) {
     consulta.tratamento,
     consulta.condicao,
     consulta.medicacao,
-    consulta.preco
+    consulta.preco,
+    consulta.finalizada
 FROM 
     consulta
 JOIN 
@@ -198,7 +199,7 @@ export async function alterarConsulta(id, consulta) {
 
 }
 
-export async function consultarfinanceiro(mes, ano){
+export async function consultarfinanceiro(mes, ano) {
 
 
 
@@ -218,7 +219,7 @@ GROUP BY
     ano, mes;
     `
 
-    let resposta= await con.query(comando[mes, ano])
+    let resposta = await con.query(comando[mes, ano])
 
     let registros = resposta[0];
 
@@ -228,7 +229,7 @@ GROUP BY
 
 export async function inserirAgenda(info) {
 
-    const dataHora = `${info.dia} ${info.hora}`; // Ex: '2024-09-28 14:30:00'
+    const dataHora = `${info.dia} ${info.hora}`;
 
     const comando = `
         INSERT INTO tb_agenda (dia_horario) 
@@ -239,7 +240,7 @@ export async function inserirAgenda(info) {
     let resposta = await con.query(comando, [dataHora]);
     let cadastro = resposta[0];
 
-    return cadastro.insertId; // Retorna o ID do registro inserido
+    return cadastro.insertId;
 }
 
 
@@ -247,62 +248,86 @@ export async function inserirAgenda(info) {
 export async function criarConsultas(info) {
 
 
-        const comando = `
+    const comando = `
         INSERT INTO consulta (id_agenda, tratamento, condicao, medicacao, preco,id_paciente, finalizada) 
         VALUES (?, ?,?,?,?,?,false);
         
                             `
-        
-        let resposta= await con.query(comando, [info.id_agenda, info.tratamento, info.condicao, info.medicacao, info.preco, info.id_paciente])
-        let cadastro = resposta[0];
-        
-        return cadastro.insertId;
-        
-        }
+
+    let resposta = await con.query(comando, [info.id_agenda, info.tratamento, info.condicao, info.medicacao, info.preco, info.id_paciente])
+    let cadastro = resposta[0];
+
+    return cadastro.insertId;
+
+}
 
 
-        export async function verificarConsultaPorCPF(cpf) {
-            try {
-                // Executa a consulta SQL para buscar consultas não finalizadas do paciente com o CPF informado
-                const [rows] = await con.query(`
+export async function verificarConsultaPorCPF(cpf) {
+    try {
+        // Executa a consulta SQL para buscar consultas não finalizadas do paciente com o CPF informado
+        const [rows] = await con.query(`
                     SELECT consulta.id_consulta
                     FROM tb_auto_cadastro
                     JOIN consulta ON tb_auto_cadastro.id_paciente = consulta.id_paciente
                     WHERE tb_auto_cadastro.cpf = ? AND consulta.finalizada = false
                 `, [cpf]);
-        
-                // Retorna a consulta encontrada (se houver) ou null caso contrário
-                return rows.length > 0 ? rows[0] : null;
-        
-            } catch (error) {
-                console.error('Erro ao consultar o banco de dados:', error);
-                throw new Error('Erro ao verificar consulta por CPF.');
-            }
-        };
+
+        // Retorna a consulta encontrada (se houver) ou null caso contrário
+        return rows.length > 0 ? rows[0] : null;
+
+    } catch (error) {
+        console.error('Erro ao consultar o banco de dados:', error);
+        throw new Error('Erro ao verificar consulta por CPF.');
+    }
+};
 
 
 export async function verificarCPFExistente(cpf) {
 
     const [resultado] = await con.query('SELECT COUNT(*) as total FROM tb_auto_cadastro WHERE cpf = ?', [cpf]);
-    return resultado.total > 0; 
+    return resultado.total > 0;
 };
 
 
-export async function obterHorariosOcupados (data){
+export async function obterHorariosOcupados(data) {
     const result = await con.query(
         'SELECT TIME(dia_horario) AS hora FROM tb_agenda WHERE DATE(dia_horario) = ?',
         [data]
     );
 
-  
+
 
     if (!result[0] || result[0].length === 0) {
         console.log('Nenhum horário ocupado encontrado para a data fornecida.');
         return []; // Retorna um array vazio em vez de lançar um erro
     }
 
- return [result[0]];;
+    return [result[0]];;
 };
+
+export async function PuxarFinanceiro(ano) {
+    const comando = `     
+        SELECT 
+            MONTH(ta.dia_horario) AS mes, 
+            SUM(tc.preco) AS valor_arrecadado
+        FROM 
+            consulta tc
+        JOIN 
+            tb_agenda ta ON tc.id_agenda = ta.id_agenda
+        WHERE 
+            YEAR(ta.dia_horario) = ?
+        GROUP BY 
+            MONTH(ta.dia_horario)
+        ORDER BY 
+            mes;
+    `;
+
+    let resposta = await con.query(comando, [ano]);
+    let info = resposta[0];
+
+    return info;
+}
+
 
 
 
