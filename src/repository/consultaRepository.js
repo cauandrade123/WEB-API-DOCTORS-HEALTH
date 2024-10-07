@@ -1,6 +1,43 @@
 import con from "./connection.js";
 
 
+export async function consultaFinalizar(cpf){
+
+        const comando = `
+     select 
+    consulta.finalizada
+    from consulta
+    JOIN tb_auto_cadastro ON consulta.id_paciente = tb_auto_cadastro.id_paciente
+    where tb_auto_cadastro.cpf = ?;
+        `
+
+        let resposta = await con.query(comando, [cpf])
+        let info = resposta[0]
+        console.log(info)
+        return info
+
+
+}
+
+export async function FinalizarConsulta(cpf) {
+
+    const comando = `
+    
+    UPDATE consulta c
+    JOIN tb_auto_cadastro p ON c.id_paciente = p.id_paciente
+    SET c.finalizada = true
+    WHERE p.cpf = ?;
+    
+
+    `
+
+    let resposta = await con.query(comando, [cpf])
+    let info = resposta[0]
+
+    return info.affectedRows;
+
+}
+
 export async function verificarLogin(info) {
 
     const comando= 'SELECT * FROM tb_login WHERE email = ?'
@@ -64,7 +101,7 @@ JOIN
 JOIN 
     tb_auto_cadastro ON consulta.id_paciente = tb_auto_cadastro.id_paciente
 WHERE 
-    CONCAT(tb_agenda.dia_horario) < NOW()
+    finalizada = true 
 ORDER BY 
     tb_agenda.dia_horario DESC
     `
@@ -96,7 +133,7 @@ JOIN
 JOIN 
     tb_auto_cadastro ON consulta.id_paciente = tb_auto_cadastro.id_paciente
 WHERE 
-    finalizada = true
+   finalizada = false 
 ORDER BY 
     tb_agenda.dia_horario DESC
     `
@@ -212,11 +249,11 @@ export async function criarConsultas(info) {
 
         const comando = `
         INSERT INTO consulta (id_agenda, tratamento, condicao, medicacao, preco,id_paciente, finalizada) 
-        VALUES (?, ?,?,?,?,?,?);
+        VALUES (?, ?,?,?,?,?,false);
         
                             `
         
-        let resposta= await con.query(comando, [info.id_agenda, info.tratamento, info.condicao, info.medicacao, info.preco, info.id_paciente, info.finalizada])
+        let resposta= await con.query(comando, [info.id_agenda, info.tratamento, info.condicao, info.medicacao, info.preco, info.id_paciente])
         let cadastro = resposta[0];
         
         return cadastro.insertId;
@@ -224,17 +261,24 @@ export async function criarConsultas(info) {
         }
 
 
-export async function verificarConsultaPorCPF(cpf) {
-
-    const [rows] = await con.query(`
-              SELECT consulta.id_consulta
-              FROM tb_auto_cadastro
-              JOIN consulta ON tb_auto_cadastro.id_paciente = consulta.id_paciente
-              WHERE tb_auto_cadastro.cpf = ? AND consulta.finalizada = 0
-            `, [cpf]);
-
-    return rows.length > 0 ? rows[0] : null;
-};
+        export async function verificarConsultaPorCPF(cpf) {
+            try {
+                // Executa a consulta SQL para buscar consultas não finalizadas do paciente com o CPF informado
+                const [rows] = await con.query(`
+                    SELECT consulta.id_consulta
+                    FROM tb_auto_cadastro
+                    JOIN consulta ON tb_auto_cadastro.id_paciente = consulta.id_paciente
+                    WHERE tb_auto_cadastro.cpf = ? AND consulta.finalizada = false
+                `, [cpf]);
+        
+                // Retorna a consulta encontrada (se houver) ou null caso contrário
+                return rows.length > 0 ? rows[0] : null;
+        
+            } catch (error) {
+                console.error('Erro ao consultar o banco de dados:', error);
+                throw new Error('Erro ao verificar consulta por CPF.');
+            }
+        };
 
 
 export async function verificarCPFExistente(cpf) {

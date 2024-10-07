@@ -5,6 +5,22 @@ const endpoints = Router();
 
 
 
+endpoints.get ('/consultaFinalizar/:cpf', async (req, resp) => {
+    let cpf = req.params.value
+
+
+    try {
+        
+        let resposta = await db.consultaFinalizar(cpf)
+
+        resp.send(resposta)
+
+    } catch (error) {
+        resp.status(404).send({
+            error: error
+        })
+    }
+})
 
 endpoints.post('/login', async (req, res) => {
     const info = req.body; 
@@ -69,7 +85,7 @@ endpoints.get('/consultasFuturas', async (req,resp) => {
         
     }
     catch (err) {
-        
+        console.log(err);
         resp.status(400).send({
             erro: err.message
         })
@@ -84,7 +100,6 @@ endpoints.get('/consultasCpf/:cpf', async (req,resp) => {
         
             let registros = await db.consultarConsultasCpf(`${cpf}%`);
             resp.send(registros)
-
         
     }
     catch (err) {
@@ -98,27 +113,23 @@ endpoints.get('/consultasCpf/:cpf', async (req,resp) => {
 
 endpoints.post('/autocadastro', async (req,resp) => {
     
+    let cadastro = req.body;
     
     try {
-        
-        let cadastro = req.body;
         
         let id = await db.inserirAutoCadastro(cadastro);
         
         resp.send({
-            Confirmação: "Consulta agendada!",
+            confirmação: "Consulta agendada!",
             pacienteId: id
-        })
-        
-        
-    }
-    catch (err) {
-        
+        });
+    } catch (err) {
+        console.error('Erro ao cadastrar paciente:', err);
         resp.status(400).send({
             erro: err.message
-        })
+        });
     }
-})
+});
 
 endpoints.put('/consultas/:id', async (req,resp) => {
     
@@ -226,24 +237,31 @@ endpoints.get('/agenda/consultas', (req, resp) => {
 
 
 
-endpoints.post('/verificarConsulta', async (req, res) => {
-    const { cpf } = req.body;
+endpoints.get('/verificarconsulta/:cpf', async (req, res) => {
+    let cpf = req.params.cpf;
 
 
     try {
         const consulta = await db.verificarConsultaPorCPF(cpf);
 
-        if (!consulta) {
-            return res.status(404).json({ message: 'Nenhuma consulta encontrada para este CPF.' });
+        // Sempre retornar 200 OK, mesmo se a consulta não existir
+        if (consulta) {
+            return res.status(200).json({
+                message: 'Paciente já possui uma consulta agendada.',
+                consulta: consulta, // Retorna os detalhes da consulta, se houver
+                hasConsulta: true   // Indicador que o paciente tem consulta
+            });
+        } else {
+            return res.status(200).json({
+                message: 'Nenhuma consulta encontrada para este CPF.',
+                hasConsulta: false  // Indicador que o paciente não tem consulta
+            });
         }
-
-        return res.status(200).json({ existe: 'Voce já possui uma consulta agendada' });
     } catch (error) {
         console.error('Erro ao verificar a consulta:', error);
         return res.status(500).json({ message: 'Erro ao verificar a consulta.' });
     }
 });
-
 
 endpoints.post('/verificar-cpf', async (req, res) => {
     const { cpf } = req.body;
@@ -273,6 +291,29 @@ endpoints.post('/horarios-ocupados', async (req, res) => {
     }
 
 });
+
+endpoints.put('/finalizarConsulta/:cpf', async (req, resp) => {
+
+    let cpf = req.params.cpf
+
+    try {
+
+        const resposta = await db.FinalizarConsulta(cpf)
+
+        if(resposta > 0) {
+        return resp.send({
+            sucesso: 'Finalizada com sucesso'
+        })
+        }
+
+    } catch (error) {
+        console.log(error)
+        resp.status(500).send({
+            error: 'Algo está errado'
+        })
+    }
+
+})
 
 
 export default endpoints;
