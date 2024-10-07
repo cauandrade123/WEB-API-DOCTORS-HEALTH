@@ -156,7 +156,8 @@ export async function consultarConsultasCpf(cpf) {
     consulta.tratamento,
     consulta.condicao,
     consulta.medicacao,
-    consulta.preco
+    consulta.preco,
+    consulta.finalizada
 FROM 
     consulta
 JOIN 
