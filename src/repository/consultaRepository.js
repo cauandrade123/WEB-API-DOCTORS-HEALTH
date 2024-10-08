@@ -331,19 +331,16 @@ export async function PuxarFinanceiro(ano) {
 
 
 
-export async function ConsultarData(){
+export async function ConsultarData() {
     let comando = `
-    select dia_horario
-    from tb_agenda
-    `
-
-    let resposta =  con.query(comando)
-
-    let info = resposta[0]
-
-    return info;
-}
-
+      SELECT dia_horario, titulo
+      FROM tb_agenda
+    `;
+  
+    let [rows] = await con.query(comando);
+    return rows; // Certifique-se de que está retornando as linhas corretamente
+  }
+  
 
 
 
