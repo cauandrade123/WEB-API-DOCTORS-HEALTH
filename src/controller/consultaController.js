@@ -337,4 +337,10 @@ endpoints.get('/puxarfinanceiro/:ano', async (req, resp) => {
     }
 });
 
+
+
+
+
+endpoints.get('')
+
 export default endpoints;

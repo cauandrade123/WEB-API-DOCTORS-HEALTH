@@ -3,17 +3,18 @@ import { Router } from "express";
 
 const endpoints  = Router()
 import nodemailer from 'nodemailer'
+
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
       user: process.env.EMAIL_CAUA,
       pass: process.env.EMAIL_PWD,
     },
-    logger: true,  // Ativa o log
-    debug: true,   // Ativa o modo de depuração
+    logger: true,  
+    debug: true,  
   });
   
-  // Verificar se o transporte está correto
+  
   transporter.verify((error, success) => {
     if (error) {
       console.log('Erro no transporte do e-mail:', error);
