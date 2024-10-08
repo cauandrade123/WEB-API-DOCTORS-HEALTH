@@ -1,6 +1,7 @@
 import * as db from '../repository/consultaRepository.js'
 import jwt from 'jsonwebtoken';
 import {Router} from "express";
+
 const endpoints = Router();
 
 
@@ -341,6 +342,12 @@ endpoints.get('/puxarfinanceiro/:ano', async (req, resp) => {
 
 
 
-endpoints.get('')
+endpoints.get('/pegardata', (req,resp) =>{
+    let consulta = db.ConsultarData()
+
+    resp.status(200).send(
+         consulta
+    )
+})
 
 export default endpoints;
