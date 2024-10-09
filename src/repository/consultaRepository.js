@@ -1,3 +1,4 @@
+import { resolveContent } from "nodemailer/lib/shared/index.js";
 import con from "./connection.js";
 
 
@@ -8,7 +9,7 @@ export async function consultaFinalizar(cpf) {
     consulta.finalizada
     from consulta
     JOIN tb_auto_cadastro ON consulta.id_paciente = tb_auto_cadastro.id_paciente
-    where tb_auto_cadastro.cpf = ?;
+    where tb_auto_cadastro.cpf       = ?;
         `
 
     let resposta = await con.query(comando, [cpf])
@@ -328,6 +329,18 @@ export async function PuxarFinanceiro(ano) {
     return info;
 }
 
+
+
+export async function ConsultarData() {
+    let comando = `
+      SELECT dia_horario, titulo
+      FROM tb_agenda
+    `;
+  
+    let [rows] = await con.query(comando);
+    return rows; // Certifique-se de que está retornando as linhas corretamente
+  }
+  
 
 
 

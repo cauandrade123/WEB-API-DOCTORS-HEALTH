@@ -1,6 +1,7 @@
 import * as db from '../repository/consultaRepository.js'
 import jwt from 'jsonwebtoken';
 import {Router} from "express";
+
 const endpoints = Router();
 
 
@@ -334,6 +335,20 @@ endpoints.get('/puxarfinanceiro/:ano', async (req, resp) => {
         resp.status(400).send({
             erro: error.message
         });
+    }
+});
+
+
+
+
+
+endpoints.get('/pegardata', async (req, resp) => {
+    try {
+        let consulta = await db.ConsultarData(); // Aguarde a função para obter os dados
+        resp.status(200).json(consulta);
+    } catch (error) {
+        console.error('Erro ao buscar dados:', error);
+        resp.status(500).send('Erro ao buscar dados do banco de dados');
     }
 });
 
