@@ -285,8 +285,10 @@ export async function verificarConsultaPorCPF(cpf) {
 
 export async function verificarCPFExistente(cpf) {
 
-    const [resultado] = await con.query('SELECT COUNT(*) as total FROM tb_auto_cadastro WHERE cpf = ?', [cpf]);
-    return resultado.total > 0;
+    const [resultado] = await con.query(`SELECT id_paciente 
+            FROM tb_auto_cadastro 
+            WHERE cpf = ?`, [cpf]);
+    return resultado.length > 0;
 };
 
 
@@ -338,9 +340,50 @@ export async function ConsultarData() {
     `;
   
     let [rows] = await con.query(comando);
-    return rows; // Certifique-se de que está retornando as linhas corretamente
+    return rows; 
   }
   
+
+  export async function cadastrado(cadastro) {
+
+    const comando = `
+INSERT INTO tb_cadastrado (id_paciente, metodo_pagamento, id_agenda) 
+VALUES (?, ?, ?);
+
+                    `
+
+    let resposta = await con.query(comando, [cadastro.id_paciente, cadastro.metodo, cadastro.id_agenda])
+    let info = resposta[0];
+
+    return info.insertId;
+
+}
+
+
+export async function obterIdPacientePorCPF(cpf) {
+    try {
+        const comando = `
+            SELECT id_paciente 
+            FROM tb_auto_cadastro 
+            WHERE cpf = ?
+        `;
+
+        
+        const [rows] = await db.query(comando, [cpf]);
+
+       
+        if (rows.length === 0) {
+            return null; 
+        }
+
+        
+        return rows[0].id_paciente;
+
+    } catch (error) {
+        console.error('Erro ao buscar o id_paciente no banco de dados:', error);
+        throw new Error('Erro ao buscar id_paciente por CPF.');
+    }
+};
 
 
 
