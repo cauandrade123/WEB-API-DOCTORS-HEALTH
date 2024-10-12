@@ -104,7 +104,7 @@ JOIN
 WHERE 
     finalizada = true 
 ORDER BY 
-    tb_agenda.dia_horario DESC
+    tb_agenda.dia_horario asc
     `
 
     let resposta = await con.query(comando)
