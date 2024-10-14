@@ -94,7 +94,8 @@ export async function consultarConsultasPassadas() {
     consulta.condicao,
     consulta.medicacao,
     consulta.preco,
-    consulta.finalizada
+    consulta.finalizada,
+    consulta.id_consulta as id
 FROM 
     consulta
 JOIN 
@@ -126,7 +127,8 @@ export async function consultarConsultasFuturas() {
     consulta.condicao,
     consulta.medicacao,
     consulta.preco,
-    consulta.finalizada
+    consulta.finalizada,
+    consulta.id_consulta as id
 FROM 
     consulta
 JOIN 
@@ -159,7 +161,8 @@ export async function consultarConsultasCpf(cpf) {
     consulta.condicao,
     consulta.medicacao,
     consulta.preco,
-    consulta.finalizada
+    consulta.finalizada,
+    consulta.id_consulta as id
 FROM 
     consulta
 JOIN 
@@ -188,14 +191,17 @@ export async function alterarConsulta(id, consulta) {
     tratamento =?,
     condicao =?,
     medicacao =?,
-    preco =?,
+    preco =?
+  
 
  where id_consulta = ?;
     `
 
+    
     let resposta = await con.query(comando, [consulta.tratamento, consulta.condicao, consulta.medicacao, consulta.preco, id])
     let info = resposta[0];
 
+    console.log(info.affectedRow)
     return info.affectedRows;
 
 }

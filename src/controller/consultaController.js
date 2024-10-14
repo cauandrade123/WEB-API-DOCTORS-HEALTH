@@ -144,13 +144,14 @@ endpoints.put('/consultas/:id', async (req,resp) => {
         
         let id = req.params.id;
         let consulta=req.body;
+        console.log(consulta)
         
-        let linhasAfetadas=await db.alterarCarros(id,consulta);
+        let linhasAfetadas=await db.alterarConsulta(id,consulta);
         if(linhasAfetadas==0){
             resp.status(404).send({erro:' nenhum registro encontrado'})
             
         }
-        else(resp.send('Consulta concluida!'))
+        else(resp.send('Consulta editada!'))
         
         
         
@@ -159,6 +160,7 @@ endpoints.put('/consultas/:id', async (req,resp) => {
         
         resp.status(400).send({
             erro: err.message
+            
         })
     }
 })
