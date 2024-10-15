@@ -69,12 +69,12 @@ export async function verificarLogin(info) {
 export async function inserirAutoCadastro(cadastro) {
 
     const comando = `
-INSERT INTO tb_auto_cadastro (nome, nascimento, rg, cpf, metodo_pagamento, telefone, id_agenda) 
-VALUES (?, ?, ?, ?, ?, ?, ?);
+INSERT INTO tb_auto_cadastro (nome, nascimento, rg, cpf, telefone, email) 
+VALUES (?, ?, ?, ?, ?, ?);
 
                     `
 
-    let resposta = await con.query(comando, [cadastro.nome, cadastro.nascimento, cadastro.rg, cadastro.cpf, cadastro.metodo, cadastro.telefone, cadastro.id_agenda])
+    let resposta = await con.query(comando, [cadastro.nome, cadastro.nascimento, cadastro.rg, cadastro.cpf, cadastro.telefone, cadastro.email])
     let info = resposta[0];
 
     return info.insertId;
@@ -256,12 +256,12 @@ export async function criarConsultas(info) {
 
 
     const comando = `
-        INSERT INTO consulta (id_agenda, tratamento, condicao, medicacao, preco,id_paciente, finalizada) 
-        VALUES (?, ?,?,?,?,?,false);
+        INSERT INTO consulta (id_agenda, tratamento, condicao, medicacao, preco,id_paciente, finalizada, metodo_pagamento) 
+        VALUES (?, ?,?,?,?,?,false, ?);
         
                             `
 
-    let resposta = await con.query(comando, [info.id_agenda, info.tratamento, info.condicao, info.medicacao, info.preco, info.id_paciente])
+    let resposta = await con.query(comando, [info.id_agenda, info.tratamento, info.condicao, info.medicacao, info.preco, info.id_paciente, info.metodo])
     let cadastro = resposta[0];
 
     return cadastro.insertId;
@@ -271,7 +271,7 @@ export async function criarConsultas(info) {
 
 export async function verificarConsultaPorCPF(cpf) {
     try {
-        // Executa a consulta SQL para buscar consultas não finalizadas do paciente com o CPF informado
+       
         const [rows] = await con.query(`
                     SELECT consulta.id_consulta
                     FROM tb_auto_cadastro
@@ -279,7 +279,7 @@ export async function verificarConsultaPorCPF(cpf) {
                     WHERE tb_auto_cadastro.cpf = ? AND consulta.finalizada = false
                 `, [cpf]);
 
-        // Retorna a consulta encontrada (se houver) ou null caso contrário
+       
         return rows.length > 0 ? rows[0] : null;
 
     } catch (error) {
@@ -308,7 +308,7 @@ export async function obterHorariosOcupados(data) {
 
     if (!result[0] || result[0].length === 0) {
         console.log('Nenhum horário ocupado encontrado para a data fornecida.');
-        return []; // Retorna um array vazio em vez de lançar um erro
+        return [];
     }
 
     return [result[0]];;
