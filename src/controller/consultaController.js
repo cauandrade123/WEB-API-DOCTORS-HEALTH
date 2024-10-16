@@ -385,11 +385,11 @@ endpoints.get('/Id-do-paciente/:cpf', async (req,resp) => {
         const id_paciente = await db.obterIdPacientePorCPF(cpf);
 
         if (!id_paciente) {
-            return resp.status(200).json({ message: 'Paciente não encontrado.' });
+            return resp.status(200).send({ message: 'Paciente não encontrado.' });
         }
 
-        return resp.status(200).json({ id_paciente });
-
+        console.log(id_paciente)
+        return resp.status(200).send({ id_paciente });
     } catch (error) {
         console.error('Erro ao obter o id_paciente:', error);
         return resp.status(500).json({ message: 'Erro no servidor ao buscar id_paciente.' });

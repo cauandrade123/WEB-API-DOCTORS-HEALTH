@@ -375,7 +375,7 @@ export async function obterIdPacientePorCPF(cpf) {
         `;
 
         
-        const [rows] = await db.query(comando, [cpf]);
+        const [rows] = await con.query(comando, [cpf]);
 
        
         if (rows.length === 0) {
