@@ -341,7 +341,7 @@ export async function PuxarFinanceiro(ano) {
 
 export async function ConsultarData() {
     let comando = `
-      SELECT dia_horario, titulo
+      SELECT dia_horario, titulo, id_agenda
       FROM tb_agenda
     `;
   
@@ -391,6 +391,42 @@ export async function obterIdPacientePorCPF(cpf) {
     }
 };
 
+
+export async function deletarData (deletarData){
+    let comando = `
+    delete titulo
+    
+    from tb_agenda
+
+    where id = ?
+    `
+
+    let resposta = await con.query(comando, deletarData)
+
+    let info = resposta[0]
+
+    return info.affectedRows
+}
+
+export async function  verificarEstadoFinalizadaAgenda(id){
+let comando = `
+select 
+consulta.finalizada,
+consulta.id_consulta,
+consulta.id_paciente,
+consulta.id_agenda,
+tb_agenda.dia_horario
+ from consulta
+ join tb_agenda on consulta.id_agenda = tb_agenda.id_agenda
+ where tb_agenda.id_agenda = ?;
+`
+
+let resposta = await con.query(comando, [id])
+
+let info = resposta[0]
+return info
+
+}
 
 
 

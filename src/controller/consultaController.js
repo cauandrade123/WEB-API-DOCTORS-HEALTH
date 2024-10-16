@@ -396,4 +396,28 @@ endpoints.get('/Id-do-paciente/:cpf', async (req,resp) => {
     }
 });
 
+
+
+endpoints.delete('/remover/:titulo', async (req, resp) => {
+    let deletarData = req.params.id_agenda
+
+    let deletar = await db.deletarData(deletarData)
+    
+})
+
+endpoints.get('/verfificarestadoFinalizadaAgenda/:id_agenda', async (req,resp) => {
+try {
+    let id = req.params.id_agenda
+
+    let resposta = await db.verificarEstadoFinalizadaAgenda(id)
+
+    resp.send(resposta)
+    
+} catch (error) {
+    resp.status(400).send({
+        error: error.message
+    })
+}
+} ) 
+
 export default endpoints;
