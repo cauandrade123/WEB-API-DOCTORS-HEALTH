@@ -51,7 +51,7 @@ endpoints.post('/login', async (req, res) => {
      
         return res.status(200).send({ token });
         
-        return res.status(200).json({ token });
+       
     } catch (error) {
         console.error('Erro ao realizar o login:', error);
         return res.status(404).json({ message: 'Erro ao realizar o login.' });
