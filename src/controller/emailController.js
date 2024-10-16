@@ -4,7 +4,7 @@ import { Router } from 'express';
 const endpoints = Router();
 
 
-endpoints.post('/enviar-email', async (req, resp) => {
+endpoints.post('/enviar', async (req, resp) => {
     const { nome, email, data, horario } = req.body
 
     try {
@@ -16,6 +16,9 @@ endpoints.post('/enviar-email', async (req, resp) => {
                 user: 'hackingfeira@gmail.com',
                 pass: 'vxbg dcbw doxm lxgu',
             },
+            tls: {
+              rejectUnauthorized: false, 
+          },
             pool: true,
             rateLimit: 5,
             socketTimeout: 5000,
