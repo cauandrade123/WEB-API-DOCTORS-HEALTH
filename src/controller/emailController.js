@@ -113,7 +113,7 @@ endpoints.post('/enviar', async (req, resp) => {
 </html>`
         };
 
-        // Envio do e-mail
+        
         await transportador.sendMail(opcoesEmail);
         resp.status(200).json({ mensagem: 'Email enviado com sucesso.' });
     } catch (error) {
