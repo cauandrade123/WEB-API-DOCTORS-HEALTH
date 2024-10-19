@@ -154,82 +154,106 @@ endpoints.post('/enviar-call', async (req, resp) => {
       to: email,
       subject: 'Consulta agendada',
       html: `<!DOCTYPE html>
-      <html lang="pt-BR">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Confirmação de Consulta - Dr. João Silva</title>
-        <style>
-          body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            color: #333;
-          }
-          .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background-color: #ffffff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-          }
-          h1 {
-            color: #0B9DEB;
-            text-align: center;
-          }
-          p {
-            font-size: 16px;
-            color: #333;
-            line-height: 1.5;
-          }
-          .header {
-            background-color: #0B9DEB;
-            padding: 20px;
-            border-radius: 10px 10px 0 0;
-          }
-          .header img {
-            display: block;
-            margin: 0 auto;
-            max-width: 150px;
-          }
-          .footer {
-            margin-top: 30px;
-            text-align: center;
-            color: #999;
-            font-size: 14px;
-          }
-          .footer a {
-            color: #0B9DEB;
-            text-decoration: none;
-          }
-          .link-consulta {
-            color: #0B9DEB;
-            font-weight: bold;
-            text-decoration: underline;
-            text-align: center;
-          }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <div class="header">
-            <img src="https://i.ibb.co/02hWXRb/logo3-removebg-preview-5.png" alt="Logo da Clínica">
-            <h2>Clínica Geral Dr. João Silva</h2>
-          </div>
-          <h1>Acesse sua Consulta Online</h1>
-          <p>Caro(a) ${nome},</p>
-          <p>Estamos enviando este e-mail para informar que sua consulta está agendada.</p>
-          <p>Para acessar sua consulta online, clique no link abaixo:</p>
-          <p><a class "link-consulta" href="${link}">Acesse por aqui!</a></p>
-          <div class="footer">
-            <p>Clínica Geral Dr. João Silva - Rua da Saúde, 123, Centro</p>
-            <p>Telefone: (11) 98125-6503</p>
-          </div>
-        </div>
-      </body>
-      </html>`
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirmação de Consulta - Dr. João Silva</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+      color: #333;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      color: #0B9DEB;
+      text-align: center;
+    }
+    p {
+      font-size: 16px;
+      color: #333;
+      line-height: 1.5;
+    }
+    .header {
+      background-color: #0B9DEB;
+      padding: 20px;
+      border-radius: 10px 10px 0 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .header img {
+      max-width: 50px;
+      margin-bottom: 10px;
+    }
+    .header h2 {
+      margin: 0;
+      font-size: 20px;
+      color: #f4f4f4;
+    }
+    .footer {
+      margin-top: 30px;
+      text-align: center;
+      color: #999;
+      font-size: 14px;
+    }
+    .footer a {
+      color: #0B9DEB;
+      text-decoration: none;
+    }
+    .link-container {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .link-consulta {
+      display: inline-block;
+      background-color: #0B9DEB;
+      color: #ffffff;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-weight: bold;
+      text-decoration: none;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+    .link-consulta:hover {
+      background-color: #097bb5;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <img src="https://i.ibb.co/02hWXRb/logo3-removebg-preview-5.png" alt="Logo da Clínica">
+      <h2>Clínica Geral Dr. João Silva</h2>
+    </div>
+    <h1>Acesse sua Consulta Online</h1>
+    <p>Caro(a) ${nome},</p>
+    <p>Estamos enviando este e-mail para informar que sua consulta está agendada.</p>
+    <p>Para acessar sua consulta online, clique no botão abaixo:</p>
+    <div class="link-container">
+      <a class="link-consulta" href="${link}">Acesse por aqui!</a>
+    </div>
+    <div class="footer">
+      <p>Clínica Geral Dr. João Silva - Rua da Saúde, 123, Centro</p>
+      <p>Telefone: (11) 98125-6503</p>
+    </div>
+  </div>
+</body>
+</html>
+`
     };
 
 
