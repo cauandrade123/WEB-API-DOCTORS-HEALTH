@@ -290,7 +290,7 @@ endpoints.post('/verificar-telefone', async (req, res) => {
 
 
     try {
-        const existe = await db.verificarTelefoneExistente(cpf);
+        const existe = await db.verificarTelefoneExistente(telefone);
         return res.status(200).json({ existe });
     } catch (error) {
         console.error('Erro ao verificar telefone:', error);
