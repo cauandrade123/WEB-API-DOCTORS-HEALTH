@@ -285,6 +285,20 @@ endpoints.post('/verificar-cpf', async (req, res) => {
 });
 
 
+endpoints.post('/verificar-telefone', async (req, res) => {
+    const { telefone } = req.body;
+
+
+    try {
+        const existe = await db.verificarTelefoneExistente(cpf);
+        return res.status(200).json({ existe });
+    } catch (error) {
+        console.error('Erro ao verificar telefone:', error);
+        return res.status(500).json({ message: 'Erro ao verificar telefone.' });
+    }
+});
+
+
 
 endpoints.post('/horarios-ocupados', async (req, res) => {
     const { data } = req.body;

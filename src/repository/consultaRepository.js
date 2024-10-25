@@ -300,6 +300,15 @@ export async function verificarCPFExistente(cpf) {
     return resultado.length > 0;
 };
 
+export async function verificarTelefoneExistente(telefone) {
+
+    const [resultado] = await con.query(`SELECT id_paciente 
+            FROM tb_auto_cadastro 
+            WHERE telefone = ?`, [telefone]);
+    return resultado.length > 0;
+};
+
+
 
 export async function obterHorariosOcupados(data) {
     const result = await con.query(
