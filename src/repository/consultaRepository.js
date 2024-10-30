@@ -1,4 +1,4 @@
-import { resolveContent } from "nodemailer/lib/shared/index.js";
+
 import con from "./connection.js";
 
 
@@ -96,6 +96,7 @@ export async function consultarConsultasPassadas() {
     consulta.medicacao,
     consulta.preco,
     consulta.finalizada,
+    consulta.metodo_consulta,
     consulta.id_consulta as id
 FROM 
     consulta
@@ -130,6 +131,7 @@ export async function consultarConsultasFuturas() {
     consulta.medicacao,
     consulta.preco,
     consulta.finalizada,
+    consulta.metodo_consulta,
     consulta.id_consulta as id
 FROM 
     consulta
@@ -165,6 +167,7 @@ export async function consultarConsultasCpf(cpf) {
     consulta.medicacao,
     consulta.preco,
     consulta.finalizada,
+    consulta.metodo_consulta,
     consulta.id_consulta as id
 FROM 
     consulta
@@ -259,7 +262,7 @@ export async function criarConsultas(info) {
 
 
     const comando = `
-        INSERT INTO consulta (id_agenda, tratamento, condicao, medicacao, preco,id_paciente, finalizada, metodo_pagamento) 
+        INSERT INTO consulta (id_agenda, tratamento, condicao, medicacao, preco,id_paciente, finalizada, metodo_consulta) 
         VALUES (?, ?,?,?,?,?,false, ?);
         
                             `
@@ -365,7 +368,7 @@ export async function ConsultarData() {
   export async function cadastrado(cadastro) {
 
     const comando = `
-INSERT INTO tb_cadastrado (id_paciente, metodo_pagamento, id_agenda) 
+INSERT INTO tb_cadastrado (id_paciente, metodo_consulta, id_agenda) 
 VALUES (?, ?, ?);
 
                     `
