@@ -206,7 +206,7 @@ endpoints.post('/enviar-call', async (req, resp) => {
     .footer {
       margin-top: 30px;
       text-align: center;
-      color: #999;
+      color: #999; 
       font-size: 14px;
     }
     .footer a {
