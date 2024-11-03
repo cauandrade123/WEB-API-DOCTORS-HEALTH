@@ -443,6 +443,19 @@ return info
 
 }
 
+export async function MinhasConsultas(idPaciente) {
+    const comando = `
+        SELECT 
+            dia_horario
+        FROM 
+            tb_agenda
+        JOIN 
+            consulta ON tb_agenda.id_agenda = consulta.id_agenda
+        WHERE 
+            consulta.id_paciente = ?`;
 
+    let resposta = await con.query(comando, [idPaciente]);
+    let info = resposta[0]
+    return info;
 
-
+}

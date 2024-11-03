@@ -1,5 +1,6 @@
 import * as db from '../repository/consultaRepository.js'
 import jwt from 'jsonwebtoken';
+import authenticateToken from '../utils/jwt.js'
 import {Router} from "express";
 
 const endpoints = Router();
@@ -125,9 +126,12 @@ endpoints.post('/autocadastro', async (req,resp) => {
         
         let id = await db.inserirAutoCadastro(cadastro);
         
+         const token = jwt.sign({ id }, process.env.JWT_SECRET2, { expiresIn: '5h' });
+
         resp.send({
             confirmação: "Consulta agendada!",
-            pacienteId: id
+            pacienteId: id,
+            token: token
         });
     } catch (err) {
         console.error('Erro ao cadastrar paciente:', err);
@@ -433,5 +437,21 @@ try {
     })
 }
 } ) 
+
+
+
+endpoints.get('/MinhasConsultas',  authenticateToken, async  (req,resp) => {
+    try {
+        let id_paciente = req.user.id
+
+        let consulta = await db.MinhasConsultas(id_paciente)
+
+        resp.status(200).send(
+            consulta
+        )
+    } catch (error) {
+        
+    }
+})
 
 export default endpoints;
