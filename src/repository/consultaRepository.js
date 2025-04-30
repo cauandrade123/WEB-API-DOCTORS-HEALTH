@@ -296,7 +296,7 @@ export async function verificarConsultaPorCPF(cpf) {
 
 
 export async function verificarCPFExistente(cpf) {
-
+    console.log('CPF recebido:', cpf);
     const [resultado] = await con.query(`SELECT id_paciente 
             FROM tb_auto_cadastro 
             WHERE cpf = ?`, [cpf]);
