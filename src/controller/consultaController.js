@@ -1,6 +1,8 @@
 import * as db from '../repository/consultaRepository.js'
+import UserService from '../services/loginService.js'
 import jwt from 'jsonwebtoken';
 import authenticateToken from '../utils/jwt.js'
+
 import {Router} from "express";
 
 const endpoints = Router();
@@ -8,24 +10,18 @@ const endpoints = Router();
 
 
 endpoints.get ('/consultaFinalizar/:cpf', async (req, resp) => {
-    let cpf = req.params.value
-
+    const cpf = req.params.value
 
     try {
         
         let resposta = await db.consultaFinalizar(cpf)
 
-        if (resposta == true) {
-           
-        } else if (resposta == false) {
-            
-        }
-
         resp.send(resposta)
 
     } catch (error) {
         resp.status(404).send({
-            error: error
+            message: 'consulta não encontrada' ,
+            error: error.message
         })
     }
 })
@@ -33,30 +29,14 @@ endpoints.get ('/consultaFinalizar/:cpf', async (req, resp) => {
 endpoints.post('/login', async (req, res) => {
     const info = req.body; 
     
-    if (!info.email || !info.senha) {
-        return res.status(400).json({ message: 'Email e senha são obrigatórios.' });
-    }
-
     try {
-        const usuario = await db.verificarLogin(info);
-
-   
-        
-        if (!usuario) {
-            return res.status(401).json({ message: 'Credenciais inválidas.' });
-        }
-        
-        
-        const token = jwt.sign({ id: usuario.id_login }, process.env.JWT_SECRET);
-      
-     
-        return res.status(200).send({ token });
-        
-       
+        const Loginusuario = await UserService.login(info);     
+        res.status(200).json({token: Loginusuario})      
     } catch (error) {
         console.error('Erro ao realizar o login:', error);
-        return res.status(404).json({ message: 'Erro ao realizar o login.' });
+        return res.status(401).json({ message: 'Erro ao realizar o login.' });
     }
+
 });
 
 
@@ -86,11 +66,10 @@ endpoints.get('/consultasPassadas', async (req,resp) => {
 endpoints.get('/consultasFuturas', async (req,resp) => {
     
     
-    try {
-        
+    try {  
         let registros = await db.consultarConsultasFuturas();
-        resp.send(registros)
-        
+
+        resp.send(registros)     
     }
     catch (err) {
         console.log(err);
@@ -103,6 +82,7 @@ endpoints.get('/consultasFuturas', async (req,resp) => {
 endpoints.get('/consultasCpf/:cpf', async (req,resp) => {
     
     let cpf = req.params.cpf
+
     try {
         
             let registros = await db.consultarConsultasCpf(`${cpf}%`);
@@ -151,11 +131,14 @@ endpoints.put('/consultas/:id', async (req,resp) => {
         console.log(consulta)
         
         let linhasAfetadas=await db.alterarConsulta(id,consulta);
+
         if(linhasAfetadas==0){
             resp.status(404).send({erro:' nenhum registro encontrado'})
-            
         }
-        else(resp.send('Consulta editada!'))
+        else{
+            resp.send('Consulta editada!')
+        }
+
         
         
         
