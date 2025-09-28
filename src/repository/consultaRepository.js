@@ -1,5 +1,5 @@
 
-import con from "./connection.js";
+import con from "../database/connection.js";
 
 
 export async function consultaFinalizar(cpf) {
@@ -38,30 +38,17 @@ export async function FinalizarConsulta(cpf) {
 
 }
 
+
 export async function verificarLogin(info) {
 
     const comando = 'SELECT * FROM tb_login WHERE email = ?'
-    try {
+    
         const [verificacao] = await con.query(comando, [info.email]);
+        
+        const consulta = verificacao[0];
 
-
-        if (verificacao.length === 0) {
-            return null;
-        }
-
-        const usuario = verificacao[0];
-
-
-        if (info.senha !== usuario.senha) {
-            return null;
-        }
-
-        return usuario;
-    } catch (error) {
-        console.log(error);
-        console.error('Erro ao verificar login:', error);
-        throw new Error('Erro ao verificar login.');
-    }
+        return consulta;
+    
 };
 
 
@@ -69,8 +56,8 @@ export async function verificarLogin(info) {
 export async function inserirAutoCadastro(cadastro) {
 
     const comando = `
-INSERT INTO tb_auto_cadastro (nome, nascimento, rg, cpf, telefone, email) 
-VALUES (?, ?, ?, ?, ?, ?);
+        INSERT INTO tb_auto_cadastro (nome, nascimento, rg, cpf, telefone, email) 
+            VALUES (?, ?, ?, ?, ?, ?);
 
                     `
 
@@ -148,7 +135,7 @@ ORDER BY
     let resposta = await con.query(comando)
     let registros = resposta[0];
 
-    return registros
+    return registros;
 }
 
 
@@ -182,7 +169,7 @@ WHERE
     let resposta = await con.query(comando, [cpf])
     let registros = resposta[0];
 
-    return registros
+    return registros;
 }
 
 
