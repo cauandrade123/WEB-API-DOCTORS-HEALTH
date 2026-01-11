@@ -13,5 +13,8 @@ servidor.use(express.json())
 
 adicionarRotas(servidor)
 
-const PORTA =  process.env.PORT
-servidor.listen(process.env.PORT, () => console.log('API subiu na porta' + PORTA || 3000)) 
+const PORTA = process.env.PORTA || 3000;
+app.listen(PORTA, () => {
+  console.log(`Server running on port ${PORTA}`);
+});
+
