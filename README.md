@@ -4,7 +4,7 @@ Este é o backend de um sistema completo de gerenciamento para clínicas médica
 
 ---
 
-## 🚀 Funcionalidades
+##  Funcionalidades
 
 - ✅ Cadastro e gerenciamento de pacientes
 - ✅ Agendamento de consultas (presencial ou teleconsulta)
@@ -19,7 +19,7 @@ Este é o backend de um sistema completo de gerenciamento para clínicas médica
 
 ---
 
-## 🧱 Arquitetura
+##  Arquitetura
 
 O backend segue a arquitetura em camadas:
 
@@ -32,7 +32,7 @@ O backend segue a arquitetura em camadas:
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
+##  Tecnologias Utilizadas
 
 - **Node.js + Express**
 - **MySQL**
@@ -46,9 +46,9 @@ O backend segue a arquitetura em camadas:
 
 ---
 
-## 📦 Como rodar o projeto
+##  Como rodar o projeto
 
-### 🔧 Pré-requisitos
+###  Pré-requisitos
 
 - Node.js v18+
 - MySQL instalado e rodando
