@@ -57,7 +57,7 @@ O backend segue a arquitetura em camadas:
 ### 📥 Clonar o repositório
 
 ```bash
-git clone https://github.com/cauandrade123/WEB-API-DOCTOR-S-HEALTH.git
+git clone https://github.com/cauandrade123/doctors-health-api.git
 
 
 
